@@ -7,9 +7,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosRequestConfig } from 'axios';
 import { Request } from 'express';
-
-const logger = new ConsoleLogger('Gateway');
-
 interface ServiceConfig {
   url: string;
 }

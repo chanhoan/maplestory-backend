@@ -12,7 +12,6 @@ import { GatewayService } from './gateway.service';
 import { Request, Response } from 'express';
 import {
   ApiBearerAuth,
-  ApiExcludeEndpoint,
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
@@ -34,7 +33,7 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Auth 서비스 응답 객체' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @All(['auth/info', 'auth/roles', 'auth/logout', 'auth/refresh'])
-  proxyAuthProtected(@Req() req: Request, @Res() res: Response) {
+  proxyAuthProtected(@Req() req: Request) {
     return this.gatewayService.forward(req, 'auth');
   }
 
@@ -43,7 +42,7 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Event 서비스 응답 객체' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @All('events/*')
-  proxyEvents(@Req() req: Request, @Res() res: Response) {
+  proxyEvents(@Req() req: Request) {
     return this.gatewayService.forward(req);
   }
 }
