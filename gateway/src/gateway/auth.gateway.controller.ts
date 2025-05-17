@@ -17,9 +17,9 @@ import { UserRole } from '../user/user.role';
 import { Roles } from '../common/roles.decorator';
 import { Public } from '../common/public.decorator';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 @ApiResponse({ status: HttpStatus.OK, description: 'Auth 서비스 응답' })
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('/api/auth')
 export class AuthGatewayController {
   constructor(private readonly gatewayService: GatewayService) {}
