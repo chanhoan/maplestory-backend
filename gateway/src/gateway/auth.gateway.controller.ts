@@ -82,7 +82,7 @@ export class AuthGatewayController {
 
   @ApiOperation({ summary: '유저 권한 관리 Proxy' })
   @Roles(UserRole.ADMIN)
-  @Put('/roles/:id')
+  @Put('/roles')
   proxyUpdateRoles(@Req() req: Request) {
     return this.gatewayService.forward(req, 'auth');
   }
