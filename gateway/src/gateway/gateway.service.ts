@@ -62,7 +62,12 @@ export class GatewayService {
       | { username: string; role: string; expiresIn: number; jti: string }
       | undefined;
 
-    const headers: Record<string, any> = { ...req.headers, host: undefined };
+    const headers: Record<string, any> = { ...req.headers };
+    delete headers.host;
+    delete headers.connection;
+    delete headers['keep-alive'];
+    delete headers['transfer-encoding'];
+    delete headers['content-length'];
 
     if (user) {
       const userInfo = {

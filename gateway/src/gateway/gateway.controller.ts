@@ -1,4 +1,11 @@
-import { Controller, All, Req, UseGuards, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  All,
+  Req,
+  UseGuards,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../security/jwt.guard';
 import { RolesGuard } from '../security/roles.guard';
 import { GatewayService } from './gateway.service';
@@ -7,7 +14,7 @@ import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UserRole } from '../user/user.role';
 import { Roles } from '../security/roles.decorator';
 
-@Controller()
+@Controller('/api')
 export class GatewayController {
   constructor(private readonly gatewayService: GatewayService) {}
 
@@ -18,7 +25,7 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Auth 서비스 응답 객체' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  @All(['auth/roles'])
+  @Post(['/auth/roles'])
   proxyAuthAdmin(@Req() req: Request) {
     return this.gatewayService.forward(req, 'auth');
   }
@@ -31,7 +38,7 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Auth 서비스 응답 객체' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('*')
-  @All(['auth/logout', 'auth/refresh'])
+  @Post(['/auth/logout', '/auth/refresh'])
   proxyAuthUser(@Req() req: Request) {
     return this.gatewayService.forward(req, 'auth');
   }
@@ -42,7 +49,7 @@ export class GatewayController {
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'Auth 서비스 응답 객체' })
   @Roles('*')
-  @All(['auth/login', 'auth/register', 'auth/info'])
+  @Post(['/auth/login', '/auth/register', '/auth/info'])
   proxyUser(@Req() req: Request) {
     return this.gatewayService.forward(req, 'auth');
   }
@@ -52,7 +59,7 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Event 서비스 응답 객체' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('*')
-  @All('events/*')
+  @All('/events/*')
   proxyEvents(@Req() req: Request) {
     return this.gatewayService.forward(req, 'events');
   }
