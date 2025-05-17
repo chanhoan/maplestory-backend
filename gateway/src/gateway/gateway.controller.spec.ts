@@ -69,9 +69,9 @@ describe('EventGatewayController', () => {
 
   it('proxyEvents should forward any event endpoint to events service', async () => {
     const req = {
-      path: '/api/evnts/foo',
+      path: '/api/events/foo',
       method: 'GET',
-      originalUrl: '/api/evnts/foo',
+      originalUrl: '/api/events/foo',
     } as Request;
     const expected = { status: 200, data: ['event1'] };
     (gatewayService.forward as jest.Mock).mockResolvedValue(expected);
