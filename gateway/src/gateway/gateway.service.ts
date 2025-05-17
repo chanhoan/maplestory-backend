@@ -2,7 +2,6 @@ import {
   Injectable,
   BadRequestException,
   InternalServerErrorException,
-  ConsoleLogger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosRequestConfig } from 'axios';
@@ -59,14 +58,31 @@ export class GatewayService {
 
     const target = `${service.url}${req.originalUrl}`;
 
+    const user = (req as any).user as
+      | { username: string; role: string; expiresIn: number; jti: string }
+      | undefined;
+
+    const headers: Record<string, any> = { ...req.headers, host: undefined };
+
+    if (user) {
+      const userInfo = {
+        username: user.username,
+        role: user.role,
+        expiresIn: user.expiresIn,
+        jti: user.jti,
+      };
+      headers['x-forwarded-user'] = encodeURIComponent(
+        JSON.stringify(userInfo),
+      );
+    }
+
     const axiosConfig: AxiosRequestConfig = {
       method: req.method as AxiosRequestConfig['method'],
       url: target,
-      headers: { ...req.headers, host: undefined },
+      headers,
       data: req.body,
       validateStatus: () => true,
     };
-
     try {
       const response = await axios.request(axiosConfig);
       return { status: response.status, data: response.data };
