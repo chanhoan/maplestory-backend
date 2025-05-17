@@ -47,7 +47,6 @@ export class AuthController {
   @ApiResponse({ status: 201, description: '회원가입 성공' })
   @Post('/register')
   register(@Body() dto: RegisterRequest): Promise<RegisterResponse> {
-    console.log('register request received');
     return this.authService.register(dto);
   }
 
@@ -77,7 +76,7 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '사용자 정보 관리' })
   @ApiResponse({ status: 200, description: '사용자 정보 반환' })
-  @Post('/info')
+  @Get('/info')
   getInfo(@Req() req: Request): Promise<GetProfileResponse> {
     return this.authService.getInfo(req);
   }

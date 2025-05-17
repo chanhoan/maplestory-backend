@@ -29,7 +29,7 @@ export class UserRepository {
   }
 
   async findAll(): Promise<UserDocument[]> {
-    return this.userModel.find().exec();
+    return this.userModel.find({ deletedAt: null }).exec();
   }
 
   async findByUsername(username: string): Promise<UserDocument | null> {
@@ -41,14 +41,17 @@ export class UserRepository {
     data: Partial<UserDocument>,
   ): Promise<UserDocument | null> {
     return await this.userModel
-      .findOneAndUpdate({ username }, data, { new: true, runValidators: true })
+      .findOneAndUpdate({ username, deletedAt: null }, data, {
+        new: true,
+        runValidators: true,
+      })
       .exec();
   }
 
   async updateRole(username: string, role: UserRole): Promise<UserDocument> {
     const user = await this.userModel
       .findOneAndUpdate(
-        { username },
+        { username, deletedAt: null },
         { role },
         { new: true, runValidators: true },
       )

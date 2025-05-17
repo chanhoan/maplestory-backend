@@ -55,7 +55,7 @@ export class AuthService {
     if (existing) {
       throw new HttpException(
         '이미 존재하는 사용자입니다.',
-        HttpStatus.NOT_FOUND,
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -152,7 +152,7 @@ export class AuthService {
   }
 
   async getInfo(req: Request): Promise<GetProfileResponse> {
-    const user = this.getUser(req.header('x-forwared-user'));
+    const user = this.getUser(req.header('x-forwarded-user'));
 
     const existUser = await this.userRepository.findByUsername(user?.username);
 
