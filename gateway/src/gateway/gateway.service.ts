@@ -2,11 +2,12 @@ import {
   Injectable,
   BadRequestException,
   InternalServerErrorException,
+  HttpException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { Request } from 'express';
-import { catchError, firstValueFrom } from 'rxjs';
+import { catchError, firstValueFrom, map } from 'rxjs';
 
 interface ServiceConfig {
   url: string;
@@ -48,7 +49,8 @@ export class GatewayService {
    */
   async forward(req: Request, overrideServiceKey?: string) {
     const key = overrideServiceKey ?? this.matchServiceKey(req.path);
-    const target = `${this.services[key].url}${req.originalUrl}`;
+    const base = this.services[key].url;
+    const url = `${base}${req.url}`;
 
     const headers = { ...req.headers };
     delete headers.host;
@@ -65,12 +67,23 @@ export class GatewayService {
       this.httpService
         .request({
           method: req.method,
-          url: target,
+          url,
           data: req.body,
           headers,
+          validateStatus: () => true,
         })
         .pipe(
+          map((resp) => {
+            const { status, data } = resp;
+            if (status < 200 || status >= 300) {
+              throw new HttpException(data, status);
+            }
+            return { status, data };
+          }),
           catchError((err) => {
+            if (err instanceof HttpException) {
+              throw err;
+            }
             throw new InternalServerErrorException(
               `Proxy 실패 (${key}): ${err.message}`,
             );
