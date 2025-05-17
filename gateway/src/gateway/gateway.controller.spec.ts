@@ -1,54 +1,82 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GatewayController } from './gateway.controller';
+import { AuthGatewayController } from './auth.gateway.controller';
+import { EventGatewayController } from './event.gateway.controller';
 import { GatewayService } from './gateway.service';
-import { JwtAuthGuard } from '../security/jwt.guard';
-import { RolesGuard } from '../security/roles.guard';
+import { Request } from 'express';
 
-describe('GatewayController', () => {
-  let controller: GatewayController;
-  let service: GatewayService;
+describe('AuthGatewayController', () => {
+  let authController: AuthGatewayController;
+  let gatewayService: GatewayService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [GatewayController],
+      controllers: [AuthGatewayController],
       providers: [
         {
           provide: GatewayService,
-          useValue: { forward: jest.fn() },
+          useValue: {
+            forward: jest.fn(),
+          },
         },
       ],
-    })
-      .overrideGuard(JwtAuthGuard)
-      .useValue({ canActivate: () => true })
-      .overrideGuard(RolesGuard)
-      .useValue({ canActivate: () => true })
-      .compile();
+    }).compile();
 
-    controller = module.get<GatewayController>(GatewayController);
-    service = module.get<GatewayService>(GatewayService);
+    authController = module.get<AuthGatewayController>(AuthGatewayController);
+    gatewayService = module.get<GatewayService>(GatewayService);
   });
 
-  it('공개된 로그인 엔드포인트를 auth 서비스로 포워딩해야 한다', () => {
-    const req: any = { url: 'auth/logout' };
-    controller.proxyAuthUser(req);
-    expect(service.forward).toHaveBeenCalledWith(req, 'auth');
+  it('proxyRegister should forward register request to auth service', async () => {
+    const req = { path: '/api/auth/register' } as Request;
+    const expected = { status: 201, data: { ok: true } };
+    (gatewayService.forward as jest.Mock).mockResolvedValue(expected);
+
+    await expect(authController.proxyRegister(req)).resolves.toEqual(expected);
+    expect(gatewayService.forward).toHaveBeenCalledWith(req, 'auth');
   });
 
-  it('공개된 로그인 엔드포인트를 auth 서비스로 포워딩해야 한다', () => {
-    const req: any = { url: 'auth/login' };
-    controller.proxyUser(req);
-    expect(service.forward).toHaveBeenCalledWith(req, 'auth');
+  it('proxyGetInfo should forward info GET request to auth service', async () => {
+    const req = { path: '/api/auth/info' } as Request;
+    const expected = { status: 200, data: { id: 1 } };
+    (gatewayService.forward as jest.Mock).mockResolvedValue(expected);
+
+    await expect(authController.proxyGetInfo(req)).resolves.toEqual(expected);
+    expect(gatewayService.forward).toHaveBeenCalledWith(req, 'auth');
+  });
+});
+
+describe('EventGatewayController', () => {
+  let eventController: EventGatewayController;
+  let gatewayService: GatewayService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [EventGatewayController],
+      providers: [
+        {
+          provide: GatewayService,
+          useValue: {
+            forward: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
+
+    eventController = module.get<EventGatewayController>(
+      EventGatewayController,
+    );
+    gatewayService = module.get<GatewayService>(GatewayService);
   });
 
-  it('보호된 사용자 정보 조회 엔드포인트를 auth 서비스로 포워딩해야 한다', async () => {
-    const req: any = { url: 'auth/roles' };
-    await controller.proxyAuthAdmin(req);
-    expect(service.forward).toHaveBeenCalledWith(req, 'auth');
-  });
+  it('proxyEvents should forward any event endpoint to events service', async () => {
+    const req = {
+      path: '/api/evnts/foo',
+      method: 'GET',
+      originalUrl: '/api/evnts/foo',
+    } as Request;
+    const expected = { status: 200, data: ['event1'] };
+    (gatewayService.forward as jest.Mock).mockResolvedValue(expected);
 
-  it('이벤트 요청을 event 서비스로 포워딩해야 한다', async () => {
-    const req: any = { url: 'events/events' };
-    await controller.proxyEvents(req);
-    expect(service.forward).toHaveBeenCalledWith(req, 'events');
+    await expect(eventController.proxyEvents(req)).resolves.toEqual(expected);
+    expect(gatewayService.forward).toHaveBeenCalledWith(req, 'events');
   });
 });
