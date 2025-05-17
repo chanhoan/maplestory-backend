@@ -52,20 +52,6 @@ export class AuthGatewayController {
     return this.gatewayService.forward(req, 'auth');
   }
 
-  @ApiOperation({ summary: '유저 권한 관리 Proxy' })
-  @Roles(UserRole.ADMIN)
-  @Post('/roles')
-  proxyCreateRoles(@Req() req: Request) {
-    return this.gatewayService.forward(req, 'auth');
-  }
-
-  @ApiOperation({ summary: '유저 권한 관리 Proxy' })
-  @Roles(UserRole.ADMIN)
-  @Put('/roles/:id')
-  proxyUpdateRoles(@Req() req: Request) {
-    return this.gatewayService.forward(req, 'auth');
-  }
-
   @ApiOperation({ summary: '유저 정보 조회 Proxy' })
   @Roles('*')
   @Get('/info')
@@ -84,6 +70,20 @@ export class AuthGatewayController {
   @Roles('*')
   @Delete('/delete')
   proxyDelete(@Req() req: Request) {
+    return this.gatewayService.forward(req, 'auth');
+  }
+
+  @ApiOperation({ summary: '유저 전체 조회 Proxy' })
+  @Roles(UserRole.ADMIN)
+  @Get('/all-users')
+  proxyGetAllUsers(@Req() req: Request) {
+    return this.gatewayService.forward(req, 'auth');
+  }
+
+  @ApiOperation({ summary: '유저 권한 관리 Proxy' })
+  @Roles(UserRole.ADMIN)
+  @Put('/roles/:id')
+  proxyUpdateRoles(@Req() req: Request) {
     return this.gatewayService.forward(req, 'auth');
   }
 }

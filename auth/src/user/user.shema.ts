@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { UserRole } from './user.role';
-import { UserStatus } from './user.status';
 
 export type UserDocument = User & Document;
 
@@ -26,14 +25,6 @@ export class User {
     index: true,
   })
   role: UserRole;
-
-  @Prop({
-    type: String,
-    enum: UserStatus,
-    default: UserStatus.ACTIVE,
-    index: true,
-  })
-  status: UserStatus;
 
   @Prop({ type: Object, default: {} })
   profile: Record<string, any>;

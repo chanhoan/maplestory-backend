@@ -4,8 +4,10 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios, { AxiosRequestConfig } from 'axios';
+import { HttpService } from '@nestjs/axios';
 import { Request } from 'express';
+import { catchError, firstValueFrom } from 'rxjs';
+
 interface ServiceConfig {
   url: string;
 }
@@ -14,7 +16,10 @@ interface ServiceConfig {
 export class GatewayService {
   private readonly services: Record<string, ServiceConfig>;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
+  ) {
     this.services =
       this.configService.get<Record<string, ServiceConfig>>('services');
   }
@@ -41,60 +46,36 @@ export class GatewayService {
    * @param overrideServiceKey 서비스 키를 덮어쓰기 위한 선택적 매개변수
    * @returns 서비스 응답 상태와 데이터를 포함하는 객체
    */
-  async forward(
-    req: Request,
-    overrideServiceKey?: string,
-  ): Promise<{ status: number; data: any }> {
-    const serviceKey = overrideServiceKey ?? this.matchServiceKey(req.path);
-    const service = this.services[serviceKey];
+  async forward(req: Request, overrideServiceKey?: string) {
+    const key = overrideServiceKey ?? this.matchServiceKey(req.path);
+    const target = `${this.services[key].url}${req.originalUrl}`;
 
-    const missingUrl = !service || !service.url;
-
-    if (missingUrl) {
-      throw new BadRequestException(
-        `서비스 URL이 지정되지 않았습니다: ${serviceKey}`,
-      );
-    }
-
-    const target = `${service.url}${req.originalUrl}`;
-
-    const user = (req as any).user as
-      | { username: string; role: string; expiresIn: number; jti: string }
-      | undefined;
-
-    const headers: Record<string, any> = { ...req.headers };
+    const headers = { ...req.headers };
     delete headers.host;
-    delete headers.connection;
-    delete headers['keep-alive'];
-    delete headers['transfer-encoding'];
     delete headers['content-length'];
 
+    const user = (req as any).user;
     if (user) {
-      const userInfo = {
-        username: user.username,
-        role: user.role,
-        expiresIn: user.expiresIn,
-        jti: user.jti,
-      };
       headers['x-forwarded-user'] = encodeURIComponent(
-        JSON.stringify(userInfo),
+        JSON.stringify({ username: user.username, role: user.role }),
       );
     }
 
-    const axiosConfig: AxiosRequestConfig = {
-      method: req.method as AxiosRequestConfig['method'],
-      url: target,
-      headers,
-      data: req.body,
-      validateStatus: () => true,
-    };
-    try {
-      const response = await axios.request(axiosConfig);
-      return { status: response.status, data: response.data };
-    } catch (err: any) {
-      throw new InternalServerErrorException(
-        `서비스 경로: ${serviceKey} / 요청 Proxy에 실패하였습니다: ${err.message}`,
-      );
-    }
+    return firstValueFrom(
+      this.httpService
+        .request({
+          method: req.method,
+          url: target,
+          data: req.body,
+          headers,
+        })
+        .pipe(
+          catchError((err) => {
+            throw new InternalServerErrorException(
+              `Proxy 실패 (${key}): ${err.message}`,
+            );
+          }),
+        ),
+    );
   }
 }

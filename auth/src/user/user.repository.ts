@@ -1,10 +1,8 @@
-// src/auth/user.repository.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './user.shema';
 import { UserRole } from './user.role';
-import { UserStatus } from './user.status';
 
 @Injectable()
 export class UserRepository {
@@ -25,7 +23,6 @@ export class UserRepository {
       email: data.email,
       passwordHash: data.passwordHash,
       role: data.role ?? UserRole.USER,
-      status: UserStatus.ACTIVE,
       profile: data.profile,
       deletedAt: null,
     });
@@ -46,47 +43,28 @@ export class UserRepository {
     return this.userModel.findOne({ username, deletedAt: null }).exec();
   }
 
-  /** email으로 조회 (soft-delete 제외) */
-  async findByEmail(email: string): Promise<UserDocument | null> {
-    return this.userModel.findOne({ email, deletedAt: null }).exec();
-  }
-
-  /** 전체 조회 (deleted 제외 or 포함) */
-  async findAll(options?: {
-    includeDeleted?: boolean;
-  }): Promise<UserDocument[]> {
-    const filter: any = {};
-    if (!options?.includeDeleted) filter.deletedAt = null;
-    return this.userModel.find(filter).exec();
-  }
-
-  /** 계정 상태 변경 */
-  async updateStatus(id: string, status: UserStatus): Promise<UserDocument> {
-    const user = await this.userModel
-      .findByIdAndUpdate(id, { status }, { new: true })
+  async findByUsernameAndUpdate(
+    username: string,
+    data: Partial<UserDocument>,
+  ): Promise<UserDocument | null> {
+    return await this.userModel
+      .findOneAndUpdate({ username }, data, { new: true, runValidators: true })
       .exec();
-    if (!user) throw new NotFoundException(`User ${id} not found`);
-    return user;
   }
 
   /** 역할 변경 */
   async updateRole(id: string, role: UserRole): Promise<UserDocument> {
     const user = await this.userModel
-      .findByIdAndUpdate(id, { role }, { new: true })
+      .findByIdAndUpdate(id, { role }, { new: true, runValidators: true })
       .exec();
     if (!user) throw new NotFoundException(`User ${id} not found`);
     return user;
   }
 
   /** soft delete */
-  async softDelete(id: string): Promise<void> {
+  async softDelete(username: string): Promise<void> {
     await this.userModel
-      .findByIdAndUpdate(id, { deletedAt: new Date() })
+      .findOneAndUpdate({ username }, { deletedAt: new Date() })
       .exec();
-  }
-
-  /** hard delete */
-  async hardDelete(id: string): Promise<void> {
-    await this.userModel.findByIdAndDelete(id).exec();
   }
 }
