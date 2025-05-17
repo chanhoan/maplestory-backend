@@ -29,23 +29,26 @@ describe('GatewayController', () => {
   });
 
   it('공개된 로그인 엔드포인트를 auth 서비스로 포워딩해야 한다', () => {
+    const req: any = { url: 'auth/logout' };
+    controller.proxyAuthUser(req);
+    expect(service.forward).toHaveBeenCalledWith(req, 'auth');
+  });
+
+  it('공개된 로그인 엔드포인트를 auth 서비스로 포워딩해야 한다', () => {
     const req: any = { url: 'auth/login' };
-    const res: any = {};
-    controller.proxyAuthPublic(req, res);
+    controller.proxyUser(req);
     expect(service.forward).toHaveBeenCalledWith(req, 'auth');
   });
 
   it('보호된 사용자 정보 조회 엔드포인트를 auth 서비스로 포워딩해야 한다', async () => {
-    const req: any = { url: 'auth/info' };
-    const res: any = {};
-    await controller.proxyAuthProtected(req, res);
+    const req: any = { url: 'auth/roles' };
+    await controller.proxyAuthAdmin(req);
     expect(service.forward).toHaveBeenCalledWith(req, 'auth');
   });
 
   it('이벤트 요청을 event 서비스로 포워딩해야 한다', async () => {
     const req: any = { url: 'events/events' };
-    const res: any = {};
-    await controller.proxyEvents(req, res);
-    expect(service.forward).toHaveBeenCalledWith(req);
+    await controller.proxyEvents(req);
+    expect(service.forward).toHaveBeenCalledWith(req, 'events');
   });
 });
