@@ -1,7 +1,7 @@
 // src/app.controller.spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppController }       from './app.controller';
-import { AppService }          from './app.service';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -9,7 +9,7 @@ describe('AppController', () => {
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
-      providers:   [AppService],
+      providers: [AppService],
     }).compile();
 
     appController = app.get<AppController>(AppController);
@@ -28,7 +28,7 @@ describe('AppController', () => {
       // timestamp 필드가 ISO 8601 형식의 문자열인지 검사
       expect(typeof result.timestamp).toBe('string');
       expect(result.timestamp).toMatch(
-          /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/,
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/,
       );
     });
   });
