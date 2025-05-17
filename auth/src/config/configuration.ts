@@ -14,6 +14,7 @@ export default () => {
     REDIS_HOST,
     REDIS_PORT,
     REFRESH_TOKEN_TTL,
+    KAFKA_BROKERS,
   } = process.env;
 
   if (!MONGODB_HOST || !MONGODB_DB) {
@@ -56,6 +57,10 @@ export default () => {
       host: REDIS_HOST || 'localhost',
       port: parseInt(REDIS_PORT, 10) || 6379,
       ttl: ttl || 60 * 60 * 24 * 7,
+    },
+
+    kafka: {
+      brokers: KAFKA_BROKERS,
     },
   };
 };

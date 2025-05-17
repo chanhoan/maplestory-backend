@@ -7,6 +7,8 @@ import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JWTConfigModule } from '../config/jwt/jwt.config.module';
 import { CacheConfigModule } from '../config/cache/cache.config.module';
+import { SagaModule } from '../saga/saga.module';
+import { KafkaModule } from '../kafka/kafka.module';
 
 @Module({
   imports: [
@@ -14,8 +16,11 @@ import { CacheConfigModule } from '../config/cache/cache.config.module';
     PassportModule,
     JWTConfigModule,
     CacheConfigModule,
+    KafkaModule,
+    SagaModule,
   ],
   controllers: [AuthController],
   providers: [UserRepository, AuthService],
+  exports: [UserRepository],
 })
 export class AuthModule {}

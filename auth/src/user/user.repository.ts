@@ -10,7 +10,6 @@ export class UserRepository {
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
   ) {}
 
-  /** 새 사용자 생성 */
   async create(data: {
     username: string;
     email: string;
@@ -29,16 +28,10 @@ export class UserRepository {
     return user.save();
   }
 
-  /** ID로 조회 (soft-delete 제외) */
-  async findById(id: string): Promise<UserDocument> {
-    const user = await this.userModel
-      .findOne({ _id: id, deletedAt: null })
-      .exec();
-    if (!user) throw new NotFoundException(`User ${id} not found`);
-    return user;
+  async findAll(): Promise<UserDocument[]> {
+    return this.userModel.find().exec();
   }
 
-  /** username으로 조회 (soft-delete 제외) */
   async findByUsername(username: string): Promise<UserDocument | null> {
     return this.userModel.findOne({ username, deletedAt: null }).exec();
   }
@@ -52,19 +45,29 @@ export class UserRepository {
       .exec();
   }
 
-  /** 역할 변경 */
-  async updateRole(id: string, role: UserRole): Promise<UserDocument> {
+  async updateRole(username: string, role: UserRole): Promise<UserDocument> {
     const user = await this.userModel
-      .findByIdAndUpdate(id, { role }, { new: true, runValidators: true })
+      .findOneAndUpdate(
+        { username },
+        { role },
+        { new: true, runValidators: true },
+      )
       .exec();
-    if (!user) throw new NotFoundException(`User ${id} not found`);
+    if (!user) throw new NotFoundException(`User ${username} not found`);
     return user;
   }
 
-  /** soft delete */
   async softDelete(username: string): Promise<void> {
     await this.userModel
       .findOneAndUpdate({ username }, { deletedAt: new Date() })
       .exec();
+  }
+
+  async restoreByUsername(username: string): Promise<void> {
+    await this.userModel.findOneAndUpdate(
+      { username },
+      { deletedAt: null },
+      { new: true, runValidators: true },
+    );
   }
 }

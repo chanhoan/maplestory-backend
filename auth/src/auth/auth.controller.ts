@@ -1,6 +1,15 @@
-import { Controller, Post, Body, Req, Param, Get, Put } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  Param,
+  Get,
+  Put,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UserRole } from '../user/user.role';
 import {
   ApiTags,
   ApiOperation,
@@ -17,75 +26,100 @@ import { RegisterResponse } from './dto/response/register.response';
 import { LoginResponse } from './dto/response/login.response';
 import { BasicResponse } from './dto/response/basic.response';
 import { GetProfileResponse } from './dto/response/get.profile.response';
+import { UpdateInfoRequest } from './dto/request/update.info.request';
+import { AssignRoleRequest } from './dto/request/assign.role.request';
 
 @ApiTags('Auth')
-@Controller('auth')
+@Controller('/api/auth')
 export class AuthController {
-  constructor(private readonly auth: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({ summary: '아이디 중복검사' })
   @ApiResponse({ status: 200, description: '아이디 중복 여부' })
-  @Get('duplicate')
+  @Get('/duplicate')
   duplicateCheck(
     @Param('username') username: string,
   ): Promise<DuplicateResponse> {
-    return this.auth.isDuplicate(username);
+    return this.authService.isDuplicate(username);
   }
 
   @ApiOperation({ summary: '회원가입' })
   @ApiResponse({ status: 201, description: '회원가입 성공' })
-  @Post('register')
+  @Post('/register')
   register(@Body() dto: RegisterRequest): Promise<RegisterResponse> {
-    return this.auth.register(dto);
+    console.log('register request received');
+    return this.authService.register(dto);
   }
 
   @ApiOperation({ summary: '로그인' })
   @ApiResponse({ status: 200, description: '로그인 성공 → 토큰 반환' })
-  @Post('login')
+  @Post('/login')
   login(@Body() dto: LoginRequest): Promise<LoginResponse> {
-    return this.auth.login(dto);
+    return this.authService.login(dto);
   }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: '로그아웃' })
   @ApiResponse({ status: 200, description: '로그아웃 처리' })
-  @Post('logout')
+  @Post('/logout')
   logout(@Req() req: Request): Promise<BasicResponse> {
-    return this.auth.logout(req);
+    return this.authService.logout(req);
   }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: '토큰 재발급 (refresh)' })
   @ApiResponse({ status: 200, description: '새 토큰 반환' })
-  @Post('refresh')
+  @Post('/refresh')
   refresh(@Req() req: Request): Promise<LoginResponse> {
-    return this.auth.refresh(req);
+    return this.authService.refresh(req);
   }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: '사용자 정보 관리' })
   @ApiResponse({ status: 200, description: '사용자 정보 반환' })
-  @Post('info')
-  getMyProfile(@Req() req: Request): Promise<GetProfileResponse> {
-    return this.auth.getProfile(req);
+  @Post('/info')
+  getInfo(@Req() req: Request): Promise<GetProfileResponse> {
+    return this.authService.getInfo(req);
   }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: '사용자 정보 관리' })
   @ApiResponse({ status: 200, description: '사용자 정보 업데이트' })
-  @Put('info')
-  updateMyProfile(@Req() req: Request): Promise<GetProfileResponse> {
-    return this.auth.getProfile(req);
+  @Put('/info')
+  updateMyProfile(
+    @Req() req: Request,
+    @Body() dto: UpdateInfoRequest,
+  ): Promise<BasicResponse> {
+    return this.authService.updateInfo(req, dto);
   }
 
   @ApiBearerAuth()
-  @ApiOperation({ summary: '권한 부여 (ADMIN 전용)' })
-  @ApiResponse({ status: 200, description: '권한 변경 완료' })
-  @Post('roles/assign')
+  @ApiOperation({ summary: '사용자 탈퇴' })
+  @ApiResponse({ status: 200, description: '사용자 탈퇴' })
+  @HttpCode(HttpStatus.ACCEPTED)
+  @Put('/info')
+  delete(@Req() req: Request): Promise<BasicResponse> {
+    return this.authService.delete(req);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '사용자 권한 부여' })
+  @ApiResponse({ status: 200, description: '사용자 권한 부여 결과' })
+  @HttpCode(HttpStatus.ACCEPTED)
+  @Get('/all-users')
+  getALlUsers(@Req() req: Request): Promise<BasicResponse> {
+    return this.authService.getAllUsers(req);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '사용자 권한 부여' })
+  @ApiResponse({ status: 200, description: '사용자 권한 부여 결과' })
+  @HttpCode(HttpStatus.ACCEPTED)
+  @Put('/roles')
   assignRole(
-    @Req() req: any,
-    @Body() body: { username: string; role: UserRole },
-  ) {
-    return this.auth.assignRole(req.user.username, body.username, body.role);
+    @Req() req: Request,
+    @Body() dto: AssignRoleRequest,
+  ): Promise<BasicResponse> {
+    return this.authService.assignRole(req, dto);
   }
 }
