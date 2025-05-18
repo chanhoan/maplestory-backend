@@ -7,6 +7,7 @@ import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { SagaModule } from './saga/saga.module';
 import { KafkaModule } from './kafka/kafka.module';
+import { CleanupModule } from './cleanup/cleanup.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { KafkaModule } from './kafka/kafka.module';
     AuthModule,
     KafkaModule,
     SagaModule,
+    CleanupModule,
   ],
   controllers: [AppController],
   providers: [AppService],

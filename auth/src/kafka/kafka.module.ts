@@ -13,11 +13,8 @@ import { ConfigService } from '@nestjs/config';
           transport: Transport.KAFKA,
           options: {
             client: {
-              clientId: 'auth-service',
-              brokers: cfg.get<string>('kafka.brokers')!.split(','),
-            },
-            consumer: {
-              groupId: 'auth-consumer-group',
+              clientId: cfg.get<string>('kafka.clientId'),
+              brokers: cfg.get<string[]>('kafka.brokers')!,
             },
           },
         }),

@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from '../user/user.shema';
-import { UserRepository } from '../user/user.repository';
+import { User, UserSchema } from './user.shema';
+import { AuthRepository } from './auth.repository';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
-import { JWTConfigModule } from '../config/jwt/jwt.config.module';
-import { CacheConfigModule } from '../config/cache/cache.config.module';
+import { JWTConfigModule } from '../jwt/jwt.config.module';
+import { CacheConfigModule } from '../cache/cache.config.module';
 import { SagaModule } from '../saga/saga.module';
 import { KafkaModule } from '../kafka/kafka.module';
 
@@ -20,7 +20,7 @@ import { KafkaModule } from '../kafka/kafka.module';
     SagaModule,
   ],
   controllers: [AuthController],
-  providers: [UserRepository, AuthService],
-  exports: [UserRepository],
+  providers: [AuthRepository, AuthService],
+  exports: [AuthRepository],
 })
 export class AuthModule {}

@@ -4,8 +4,8 @@ import { UserDeletionSagaClient } from './clients/user-deletion.client';
 import { UserDeletionOrchestrator } from './orchestrator/user-deletion.orchestrator';
 import { KafkaModule } from '../kafka/kafka.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from '../user/user.shema';
-import { UserRepository } from '../user/user.repository';
+import { User, UserSchema } from '../auth/user.shema';
+import { AuthRepository } from '../auth/auth.repository';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { UserRepository } from '../user/user.repository';
     KafkaModule,
     HttpModule.register({ timeout: 5000 }),
   ],
-  providers: [UserRepository, UserDeletionSagaClient, UserDeletionOrchestrator],
-  exports: [UserDeletionOrchestrator],
+  providers: [AuthRepository, UserDeletionSagaClient],
+  controllers: [UserDeletionOrchestrator],
 })
 export class SagaModule {}

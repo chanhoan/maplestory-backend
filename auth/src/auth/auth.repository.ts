@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './user.shema';
 import { UserRole } from './user.role';
 
 @Injectable()
-export class UserRepository {
+export class AuthRepository {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
   ) {}
@@ -23,53 +23,61 @@ export class UserRepository {
       passwordHash: data.passwordHash,
       role: data.role ?? UserRole.USER,
       profile: data.profile,
-      deletedAt: null,
     });
     return user.save();
   }
 
   async findAll(): Promise<UserDocument[]> {
-    return this.userModel.find({ deletedAt: null }).exec();
+    return this.userModel.find({ deletedAt: { $exists: false } }).exec();
   }
 
   async findByUsername(username: string): Promise<UserDocument | null> {
-    return this.userModel.findOne({ username, deletedAt: null }).exec();
+    return this.userModel
+      .findOne({ username: username, deletedAt: { $exists: false } })
+      .exec();
   }
 
-  async findByUsernameAndUpdate(
-    username: string,
+  async findById(id: string): Promise<UserDocument | null> {
+    return this.userModel
+      .findOne({ _id: id, deletedAt: { $exists: false } })
+      .exec();
+  }
+
+  async findByIdAndUpdate(
+    id: string,
     data: Partial<UserDocument>,
   ): Promise<UserDocument | null> {
     return await this.userModel
-      .findOneAndUpdate({ username, deletedAt: null }, data, {
+      .findOneAndUpdate({ _id: id, deletedAt: { $exists: false } }, data, {
         new: true,
         runValidators: true,
       })
       .exec();
   }
 
-  async updateRole(username: string, role: UserRole): Promise<UserDocument> {
-    const user = await this.userModel
+  async updateRole(id: string, role: UserRole): Promise<UserDocument | null> {
+    return await this.userModel
       .findOneAndUpdate(
-        { username, deletedAt: null },
+        { _id: id, deletedAt: { $exists: false } },
         { role },
         { new: true, runValidators: true },
       )
       .exec();
-    if (!user) throw new NotFoundException(`User ${username} not found`);
-    return user;
   }
 
-  async softDelete(username: string): Promise<void> {
+  async softDelete(id: string): Promise<void> {
     await this.userModel
-      .findOneAndUpdate({ username }, { deletedAt: new Date() })
+      .findOneAndUpdate(
+        { _id: id, deletedAt: { $exists: false } },
+        { $set: { deletedAt: new Date() } },
+      )
       .exec();
   }
 
-  async restoreByUsername(username: string): Promise<void> {
+  async restoreById(id: string): Promise<void> {
     await this.userModel.findOneAndUpdate(
-      { username },
-      { deletedAt: null },
+      { _id: id, deletedAt: { $exists: true } },
+      { $unset: { deletedAt: '' } },
       { new: true, runValidators: true },
     );
   }

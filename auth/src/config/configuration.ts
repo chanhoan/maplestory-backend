@@ -15,6 +15,8 @@ export default () => {
     REDIS_PORT,
     REFRESH_TOKEN_TTL,
     KAFKA_BROKERS,
+    KAFKA_CLIENT_ID,
+    KAFKA_GROUP_ID,
   } = process.env;
 
   if (!MONGODB_HOST || !MONGODB_DB) {
@@ -29,6 +31,10 @@ export default () => {
 
   const ttlString = REFRESH_TOKEN_TTL ?? '604800';
   const ttl = parseInt(ttlString, 10);
+
+  if (!KAFKA_BROKERS) throw new Error('KAFKA_BROKERS is not defined');
+
+  const brokers = KAFKA_BROKERS.split(',').map((b) => b.trim());
 
   return {
     port: parseInt(PORT!, 10) || 4001,
@@ -60,7 +66,9 @@ export default () => {
     },
 
     kafka: {
-      brokers: KAFKA_BROKERS,
+      clientId: KAFKA_CLIENT_ID,
+      brokers: brokers,
+      groupId: KAFKA_GROUP_ID,
     },
   };
 };
