@@ -59,7 +59,13 @@ export class GatewayService {
     const user = (req as any).user;
     if (user) {
       headers['x-forwarded-user'] = encodeURIComponent(
-        JSON.stringify({ username: user.username, role: user.role }),
+        JSON.stringify({
+          userId: user.userId,
+          username: user.username,
+          role: user.role,
+          expiresIn: user.expiresIn,
+          jti: user.jti,
+        }),
       );
     }
 

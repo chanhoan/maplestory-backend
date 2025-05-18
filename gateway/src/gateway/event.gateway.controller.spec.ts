@@ -1,62 +1,60 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { EventGatewayController } from './event.gateway.controller';
 import { GatewayService } from './gateway.service';
-import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
-import { BadRequestException } from '@nestjs/common';
+import { Request } from 'express';
 
-jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
-
-describe('GatewayService', () => {
-  let service: GatewayService;
+describe('EventGatewayController', () => {
+  let controller: EventGatewayController;
+  let gatewayService: Partial<Record<keyof GatewayService, jest.Mock>>;
+  const mockResult = { success: true };
+  const mockReq = {} as Request;
 
   beforeEach(async () => {
+    gatewayService = {
+      forward: jest.fn().mockReturnValue(mockResult),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        GatewayService,
-        {
-          provide: ConfigService,
-          useValue: {
-            get: jest.fn().mockReturnValue({
-              auth: { url: 'http://auth' },
-              events: { url: 'http://events' },
-            }),
-          },
-        },
-      ],
+      controllers: [EventGatewayController],
+      providers: [{ provide: GatewayService, useValue: gatewayService }],
     }).compile();
 
-    service = module.get<GatewayService>(GatewayService);
+    controller = module.get<EventGatewayController>(EventGatewayController);
   });
 
-  it('경로에 따라 서비스 키를 올바르게 매핑해야 한다', () => {
-    expect((service as any).matchServiceKey('/auth/login')).toBe('auth');
-    expect((service as any).matchServiceKey('/events/list')).toBe('events');
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
 
-  it('알 수 없는 경로일 경우 BadRequestException을 던져야 한다', () => {
-    expect(() => (service as any).matchServiceKey('/unknown/123')).toThrow(
-      BadRequestException,
-    );
-  });
+  const methods = [
+    { name: 'proxyGetEvents', call: () => controller.proxyGetEvents(mockReq) },
+    { name: 'proxyGetEvent', call: () => controller.proxyGetEvent(mockReq) },
+    {
+      name: 'proxyRegisterEvent',
+      call: () => controller.proxyRegisterEvent(mockReq),
+    },
+    {
+      name: 'proxyGetRewards',
+      call: () => controller.proxyGetRewards(mockReq),
+    },
+    { name: 'proxyGetReward', call: () => controller.proxyGetReward(mockReq) },
+    {
+      name: 'proxyRegisterReward',
+      call: () => controller.proxyRegisterReward(mockReq),
+    },
+    { name: 'register', call: () => controller.register(mockReq) },
+    {
+      name: 'getMyAllRequests',
+      call: () => controller.getMyAllRequests(mockReq),
+    },
+    { name: 'findMyOne', call: () => controller.findMyOne(mockReq) },
+  ];
 
-  it('올바른 URL로 요청을 포워딩해야 한다', async () => {
-    const fakeReq = {
-      method: 'GET',
-      path: '/events/items',
-      originalUrl: '/events/items?foo=bar',
-      headers: { authorization: 'Bearer tok' },
-      body: {},
-    } as any;
-    mockedAxios.request.mockResolvedValue({ status: 200, data: { ok: true } });
-
-    const result = await service.forward(fakeReq);
-    expect(mockedAxios.request).toHaveBeenCalledWith(
-      expect.objectContaining({
-        url: 'http://events/events/items?foo=bar',
-        method: 'GET',
-      }),
-    );
-    expect(result).toEqual({ status: 200, data: { ok: true } });
+  methods.forEach(({ name, call }) => {
+    it(`${name} should forward request to GatewayService`, async () => {
+      const result = await call();
+      expect(gatewayService.forward).toHaveBeenCalledWith(mockReq, 'events');
+      expect(result).toBe(mockResult);
+    });
   });
 });
