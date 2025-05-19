@@ -18,7 +18,7 @@ import { ConfigService } from '@nestjs/config';
                 brokers,
                 ssl: false,
                 sasl: {
-                  mechanism: 'scram-sha-256',
+                  mechanism: 'plain',
                   username: cs.get<string>('KAFKA_SASL_USERNAME')!,
                   password: cs.get<string>('KAFKA_SASL_PASSWORD')!,
                 },
