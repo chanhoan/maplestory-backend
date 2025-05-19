@@ -39,7 +39,7 @@ async function bootstrap() {
         },
         ssl: false,
         sasl: {
-          mechanism: 'scram-sha-256',
+          mechanism: 'plain',
           username: config.get<string>('KAFKA_SASL_USERNAME')!,
           password: config.get<string>('KAFKA_SASL_PASSWORD')!,
         } as SASLOptions,
