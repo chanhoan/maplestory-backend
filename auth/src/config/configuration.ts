@@ -1,22 +1,37 @@
 import { createSecretKey } from 'crypto';
-import * as process from 'process';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+const env = process.env.NODE_ENV || 'development';
+
+dotenv.config({
+  path: path.resolve(process.cwd(), `.env.${env}`),
+});
 
 export default () => {
   const {
+    PORT,
+    JWT_SECRET_BASE64,
+    JWT_EXPIRES_IN,
+
+    GATEWAY_SERVICE_URL,
+    EVENT_SERVICE_URL,
+
     MONGODB_HOST,
     MONGODB_PORT,
     MONGODB_DB,
-    JWT_SECRET_BASE64,
-    JWT_EXPIRES_IN,
-    PORT,
-    GATEWAY_SERVICE_URL,
-    EVENT_SERVICE_URL,
-    REDIS_HOST,
-    REDIS_PORT,
-    REFRESH_TOKEN_TTL,
+    MONGODB_USER,
+    MONGODB_PASS,
+
     KAFKA_BROKERS,
     KAFKA_CLIENT_ID,
     KAFKA_GROUP_ID,
+    KAFKA_SASL_USERNAME,
+    KAFKA_SASL_PASSWORD,
+
+    REDIS_HOST,
+    REDIS_PORT,
+    REFRESH_TOKEN_TTL,
   } = process.env;
 
   if (!MONGODB_HOST || !MONGODB_DB) {
@@ -43,6 +58,8 @@ export default () => {
       host: MONGODB_HOST,
       port: parseInt(MONGODB_PORT!, 10) || 27017,
       db: MONGODB_DB,
+      user: MONGODB_USER,
+      pass: MONGODB_PASS,
     },
 
     jwt: {
@@ -69,6 +86,12 @@ export default () => {
       clientId: KAFKA_CLIENT_ID,
       brokers: brokers,
       groupId: KAFKA_GROUP_ID,
+      sasl: {
+        mechanism: 'scram-sha-256',
+        username: KAFKA_SASL_USERNAME!,
+        password: KAFKA_SASL_PASSWORD!,
+      },
+      ssl: false,
     },
   };
 };

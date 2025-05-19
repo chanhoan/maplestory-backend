@@ -10,12 +10,11 @@ import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { KafkaOptions, Transport } from '@nestjs/microservices';
+import type { SASLOptions } from 'kafkajs';
 
 async function bootstrap() {
   const logger = new ConsoleLogger('Auth');
-  const app = await NestFactory.create(AppModule, {
-    logger,
-  });
+  const app = await NestFactory.create(AppModule, { logger });
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
@@ -23,8 +22,8 @@ async function bootstrap() {
   const port = config.get<number>('port', 4001);
 
   const brokers = config.get<string>('KAFKA_BROKERS')!.split(',');
-  const clientId = config.get<string>('KAFKA_CLIENT_ID');
-  const groupId = config.get<string>('KAFKA_GROUP_ID') ?? 'event-service';
+  const clientId = config.get<string>('KAFKA_CLIENT_ID')!;
+  const groupId = config.get<string>('KAFKA_GROUP_ID') ?? 'auth-service';
 
   logger.log(`brokers: ${brokers}`);
 
@@ -38,8 +37,17 @@ async function bootstrap() {
           initialRetryTime: 100,
           retries: 5,
         },
+        ssl: false,
+        sasl: {
+          mechanism: 'scram-sha-256',
+          username: config.get<string>('KAFKA_SASL_USERNAME')!,
+          password: config.get<string>('KAFKA_SASL_PASSWORD')!,
+        } as SASLOptions,
       },
-      consumer: { groupId, allowAutoTopicCreation: true },
+      consumer: {
+        groupId,
+        allowAutoTopicCreation: true,
+      },
     },
   };
 
@@ -59,4 +67,5 @@ async function bootstrap() {
   await app.listen(port);
   logger.log(`Auth server listening on port: ${port}`);
 }
+
 bootstrap();
