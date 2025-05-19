@@ -128,7 +128,7 @@ export class EventGatewayController {
    */
   @ApiOperation({ summary: '보상 요청 목록 조회' })
   @ApiResponse({ status: 200, description: '보상 요청 목록 조회 성공' })
-  @Roles('*')
+  @Roles(UserRole.USER, UserRole.AUDITOR, UserRole.ADMIN)
   @Get('requests')
   async getMyAllRequests(@Req() req: Request) {
     return this.gatewayService.forward(req, 'events');
@@ -142,7 +142,7 @@ export class EventGatewayController {
    */
   @ApiOperation({ summary: '보상 요청 상세 조회' })
   @ApiResponse({ status: 200, description: '보상 요청 상세 조회 성공' })
-  @Roles('*')
+  @Roles(UserRole.USER, UserRole.AUDITOR, UserRole.ADMIN)
   @Get('requests/:id')
   async findMyOne(@Req() req: Request) {
     return this.gatewayService.forward(req, 'events');

@@ -1,5 +1,14 @@
 import { createSecretKey } from 'crypto';
 
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+const env = process.env.NODE_ENV || 'development';
+
+dotenv.config({
+  path: path.resolve(process.cwd(), `.env.${env}`),
+});
+
 export default () => ({
   port: parseInt(process.env.PORT!, 10),
 
