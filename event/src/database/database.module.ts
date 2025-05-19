@@ -18,7 +18,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         }>('mongodb')!;
 
         const uri = `mongodb://${encodeURIComponent(m.user!)}:${encodeURIComponent(m.pass!)}@${m.host}:${m.port}/${m.db}?authSource=${m.db}`;
-
+        console.log(`uri: ${uri}`);
         return {
           uri,
         };
