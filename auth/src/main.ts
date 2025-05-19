@@ -19,7 +19,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   const config = app.get(ConfigService);
-  const port = config.get<number>('port', 4001);
+  const port = config.get<number>('port', 4000);
 
   const brokers = config.get<string>('KAFKA_BROKERS')!.split(',');
   const clientId = config.get<string>('KAFKA_CLIENT_ID')!;
