@@ -1,6 +1,10 @@
-import { Injectable, ConflictException, ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, FilterQuery } from 'mongoose';
+import {
+  Injectable,
+  ConflictException,
+  ForbiddenException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { RewardRequestRepository } from './reward-request.repository';
 import { EventProgressRepository } from '../event-progress/event-progress.repository';
 import { JwtUser } from '../common/dto/user.decorator';
@@ -10,7 +14,10 @@ import { GetAllRewardRequestResponse } from './dto/response/get-all-reward-reque
 import { GetRewardRequestResponse } from './dto/response/get-reward-request.response';
 import { RewardRequestFilterRequest } from './dto/request/reward-request.filter.request';
 import { RewardRequestResponse } from './dto/response/reward-request.response';
-import { RewardRequestStatus, RewardRequestDocument } from './reward-request.schema';
+import {
+  RewardRequestStatus,
+  RewardRequestDocument,
+} from './reward-request.schema';
 import { UserRole } from '../common/dto/user.role';
 
 /**
