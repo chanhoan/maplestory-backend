@@ -17,11 +17,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           pass?: string;
         }>('mongodb')!;
 
-        const auth =
-          m.user && m.pass
-            ? `${encodeURIComponent(m.user)}:${encodeURIComponent(m.pass)}@`
-            : '';
-        const uri = `mongodb://${auth}${m.host}:${m.port}/${m.db}`;
+        const uri = `mongodb://${encodeURIComponent(m.user!)}:${encodeURIComponent(m.pass!)}@${m.host}:${m.port}/${m.db}?authSource=${m.db}`;
 
         return {
           uri,
