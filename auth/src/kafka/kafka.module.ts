@@ -1,34 +1,29 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport, KafkaOptions } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
-import { SASLOptions } from 'kafkajs';
 
 @Module({
   imports: [
     ClientsModule.registerAsync([
       {
         name: 'KAFKA_SERVICE',
-        imports: [],
         inject: [ConfigService],
-        useFactory: (cfg: ConfigService): KafkaOptions => {
-          const kafkaConfig = cfg.get<any>('kafka');
-
+        useFactory: (cs: ConfigService): KafkaOptions => {
+          const brokers = cs.get<string>('KAFKA_BROKERS')!.split(',');
           return {
             transport: Transport.KAFKA,
             options: {
               client: {
-                clientId: kafkaConfig.clientId,
-                brokers: kafkaConfig.brokers,
-                ssl: kafkaConfig.ssl,
+                clientId: 'event-producer',
+                brokers,
+                ssl: false,
                 sasl: {
                   mechanism: 'scram-sha-256',
-                  username: kafkaConfig.sasl.username,
-                  password: kafkaConfig.sasl.password,
-                } as SASLOptions,
+                  username: cs.get<string>('KAFKA_SASL_USERNAME')!,
+                  password: cs.get<string>('KAFKA_SASL_PASSWORD')!,
+                },
               },
-              consumer: {
-                groupId: kafkaConfig.groupId,
-              },
+              producerOnlyMode: true,
             },
           };
         },
