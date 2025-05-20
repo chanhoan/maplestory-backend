@@ -343,7 +343,9 @@
 ## 10. 실행 방법
 
 
-#### docker-compose 환경변수 파일일
+#### docker-compose 환경변수 파일
+- 비밀번호 입력 후 사용
+
 ```env
 KAFKA_BROKERS=kafka:9092
 
