@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { CleanupService } from './cleanup.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Event, EventSchema } from '../event/event.schema';
+import { Event, EventSchema } from '../modules/event/schema/event.schema';
 import {
   EventProgress,
   EventProgressSchema,
-} from '../event-progress/event-progress.schema';
-import { Reward, RewardSchema } from '../reward/reward.schema';
+} from '../modules/event-progress/schema/event-progress.schema';
+import { Reward, RewardSchema } from '../modules/reward/schema/reward.schema';
 import {
   RewardRequest,
   RewardRequestSchema,
-} from '../reward-request/reward-request.schema';
+} from '../modules/reward-request/schema/reward-request.schema';
 import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
