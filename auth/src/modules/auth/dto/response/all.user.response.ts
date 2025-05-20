@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BasicResponse } from '../../../common/responses/basic.response';
+import { BasicResponse } from '../../../../common/responses/basic.response';
 import { UserDto } from './user.dto';
 
 /**

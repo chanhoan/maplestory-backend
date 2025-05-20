@@ -1,6 +1,6 @@
 import { Controller, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventPattern, Payload, ClientKafka } from '@nestjs/microservices';
-import { AuthRepository } from '../../auth/repository/auth.repository';
+import { AuthRepository } from '../../modules/auth/repository/auth.repository';
 import { UserDeletionSagaClient } from './user-deletion.client';
 
 /**

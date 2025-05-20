@@ -14,7 +14,7 @@ import { randomUUID } from 'crypto';
 import { ClientKafka } from '@nestjs/microservices';
 
 import { AuthRepository } from '../repository/auth.repository';
-import { UserRole } from '../../common/enums/user.role';
+import { UserRole } from '../../../common/enums/user.role';
 import { UserDocument } from '../schema/user.shema';
 
 import { RegisterRequest } from '../dto/request/register.request';
@@ -25,13 +25,13 @@ import { AssignRoleRequest } from '../dto/request/assign.role.request';
 import { DuplicateResponse } from '../dto/response/dupblicate.response';
 import { RegisterResponse } from '../dto/response/register.response';
 import { LoginResponse } from '../dto/response/login.response';
-import { BasicResponse } from '../../common/responses/basic.response';
+import { BasicResponse } from '../../../common/responses/basic.response';
 import { GetProfileResponse } from '../dto/response/get.profile.response';
 import { AllUserResponse } from '../dto/response/all.user.response';
 import { UserDto } from '../dto/response/user.dto';
 
 import { Request } from 'express';
-import { JwtUser } from '../../common/decorators/user.decorator';
+import { JwtUser } from '../../../common/decorators/user.decorator';
 
 /**
  * 인증(Authentication) 관련 비즈니스 로직을 처리하는 서비스입니다.

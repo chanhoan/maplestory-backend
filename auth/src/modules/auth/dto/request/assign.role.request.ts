@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsEnum, IsString } from 'class-validator';
-import { UserRole } from '../../../common/enums/user.role';
+import { UserRole } from '../../../../common/enums/user.role';
 
 /**
  * 사용자에게 특정 역할을 할당하기 위한 요청 DTO입니다.

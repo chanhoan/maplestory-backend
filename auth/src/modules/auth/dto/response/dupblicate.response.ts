@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BasicResponse } from '../../../common/responses/basic.response';
+import { BasicResponse } from '../../../../common/responses/basic.response';
 
 /**
  * 아이디 중복 검사 결과를 반환하는 DTO입니다.

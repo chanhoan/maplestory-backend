@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import * as bcrypt from 'bcrypt';
-import { UserRole } from '../../common/enums/user.role';
+import { UserRole } from '../../../common/enums/user.role';
 
 describe('AuthService', () => {
   let service: AuthService;

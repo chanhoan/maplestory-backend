@@ -8,10 +8,10 @@ import { AssignRoleRequest } from '../dto/request/assign.role.request';
 import { DuplicateResponse } from '../dto/response/dupblicate.response';
 import { RegisterResponse } from '../dto/response/register.response';
 import { LoginResponse } from '../dto/response/login.response';
-import { BasicResponse } from '../../common/responses/basic.response';
+import { BasicResponse } from '../../../common/responses/basic.response';
 import { GetProfileResponse } from '../dto/response/get.profile.response';
 import { AllUserResponse } from '../dto/response/all.user.response';
-import { UserRole } from '../../common/enums/user.role';
+import { UserRole } from '../../../common/enums/user.role';
 
 describe('AuthController', () => {
   let controller: AuthController;

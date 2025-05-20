@@ -5,10 +5,10 @@ import { AuthRepository } from './repository/auth.repository';
 import { AuthService } from './service/auth.service';
 import { AuthController } from './controller/auth.controller';
 import { PassportModule } from '@nestjs/passport';
-import { JWTConfigModule } from '../jwt/jwt.config.module';
-import { CacheConfigModule } from '../cache/cache.config.module';
-import { SagaModule } from '../saga/saga.module';
-import { KafkaModule } from '../kafka/kafka.module';
+import { JWTConfigModule } from '../../jwt/jwt.config.module';
+import { CacheConfigModule } from '../../cache/cache.config.module';
+import { SagaModule } from '../../saga/saga.module';
+import { KafkaModule } from '../../kafka/kafka.module';
 
 @Module({
   imports: [
