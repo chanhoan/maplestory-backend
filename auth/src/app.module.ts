@@ -4,7 +4,7 @@ import configuration from './config/configuration';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { SagaModule } from './saga/saga.module';
 import { KafkaModule } from './kafka/kafka.module';
 import { CleanupModule } from './cleanup/cleanup.module';

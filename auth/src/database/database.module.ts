@@ -1,5 +1,5 @@
 import { Module, Global } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Global()
@@ -8,25 +8,19 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     ConfigModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (cs: ConfigService) => {
+      useFactory: (cs: ConfigService): MongooseModuleOptions => {
         const m = cs.get<{
           host: string;
           port: number;
           db: string;
           user?: string;
           pass?: string;
-        }>('mongodb');
+        }>('mongodb')!;
 
-        const auth =
-          m!.user && m!.pass
-            ? `${encodeURIComponent(m!.user)}:${encodeURIComponent(m!.pass)}@`
-            : '';
-        const uri = `mongodb://${auth}${m!.host}:${m!.port}/${m!.db}`;
+        const uri = `mongodb://${encodeURIComponent(m.user!)}:${encodeURIComponent(m.pass!)}@${m.host}:${m.port}/${m.db}?authSource=${m.db}`;
 
         return {
           uri,
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
         };
       },
       inject: [ConfigService],

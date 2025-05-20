@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
-import { UserDeletionSagaClient } from './clients/user-deletion.client';
-import { UserDeletionOrchestrator } from './orchestrator/user-deletion.orchestrator';
+import { UserDeletionSagaClient } from './user-deletion/user-deletion.client';
+import { UserDeletionOrchestrator } from './user-deletion/user-deletion.orchestrator';
 import { KafkaModule } from '../kafka/kafka.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from '../auth/user.shema';
-import { AuthRepository } from '../auth/auth.repository';
+import { User, UserSchema } from '../modules/auth/schema/user.shema';
+import { AuthRepository } from '../modules/auth/repository/auth.repository';
 
 @Module({
   imports: [

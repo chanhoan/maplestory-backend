@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
-import { IS_PUBLIC_KEY } from '../common/public.decorator';
+import { IS_PUBLIC_KEY } from '../common/decorators/public.decorator';
 
 /**
  * JWT 인증 가드를 확장하여,

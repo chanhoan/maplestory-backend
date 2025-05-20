@@ -6,8 +6,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { IS_PUBLIC_KEY } from '../common/public.decorator';
-import { ROLES_KEY } from '../common/roles.decorator';
+import { IS_PUBLIC_KEY } from '../common/decorators/public.decorator';
+import { ROLES_KEY } from '../common/decorators/roles.decorator';
 
 /**
  * 요청에 설정된 역할(roles) 메타데이터를 검사하여

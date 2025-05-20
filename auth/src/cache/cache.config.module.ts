@@ -10,11 +10,19 @@ import * as redisStore from 'cache-manager-redis-store';
     CacheModule.registerAsync({
       imports: [ConfigModule],
       isGlobal: true,
-      useFactory: (cs: ConfigService) => ({
-        store: redisStore,
-        url: `redis://${cs.get('REDIS_HOST')}:${cs.get('REDIS_PORT')}`,
-        ttl: cs.get<number>('REFRESH_TOKEN_TTL') || 60 * 60 * 24 * 7,
-      }),
+      useFactory: (cs: ConfigService) => {
+        const host = cs.get<string>('REDIS_HOST');
+        const port = cs.get<number>('REDIS_PORT');
+        const password = cs.get<string>('REDIS_PASSWORD');
+        const ttl = cs.get<number>('REFRESH_TOKEN_TTL') || 60 * 60 * 24 * 7;
+
+        return {
+          store: redisStore,
+          url: `redis://:${encodeURIComponent(password!)}@${host}:${port}`,
+
+          ttl,
+        };
+      },
       inject: [ConfigService],
     }),
   ],
