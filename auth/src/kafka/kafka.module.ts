@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ClientsModule, Transport, KafkaOptions } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
@@ -7,17 +7,26 @@ import { ConfigService } from '@nestjs/config';
     ClientsModule.registerAsync([
       {
         name: 'KAFKA_SERVICE',
-        imports: [],
         inject: [ConfigService],
-        useFactory: (cfg: ConfigService) => ({
-          transport: Transport.KAFKA,
-          options: {
-            client: {
-              clientId: cfg.get<string>('kafka.clientId'),
-              brokers: cfg.get<string[]>('kafka.brokers')!,
+        useFactory: (cs: ConfigService): KafkaOptions => {
+          const brokers = cs.get<string>('KAFKA_BROKERS')!.split(',');
+          return {
+            transport: Transport.KAFKA,
+            options: {
+              client: {
+                clientId: 'event-producer',
+                brokers,
+                ssl: false,
+                sasl: {
+                  mechanism: 'plain',
+                  username: cs.get<string>('KAFKA_SASL_USERNAME')!,
+                  password: cs.get<string>('KAFKA_SASL_PASSWORD')!,
+                },
+              },
+              producerOnlyMode: true,
             },
-          },
-        }),
+          };
+        },
       },
     ]),
   ],

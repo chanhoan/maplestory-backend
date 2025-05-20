@@ -18,9 +18,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserRole } from '../common/user.role';
-import { Roles } from '../common/roles.decorator';
-import { Public } from '../common/public.decorator';
+import { UserRole } from '../common/enums/user.role';
+import { Roles } from '../common/decorators/roles.decorator';
+import { Public } from '../common/decorators/public.decorator';
 
 @ApiTags('Gateway/Auth')
 @ApiBearerAuth()

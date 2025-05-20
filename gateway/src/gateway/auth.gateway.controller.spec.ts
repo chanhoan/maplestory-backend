@@ -32,10 +32,19 @@ describe('AuthGatewayController', () => {
     { name: 'proxyLogout', method: () => controller.proxyLogout(mockReq) },
     { name: 'proxyRefresh', method: () => controller.proxyRefresh(mockReq) },
     { name: 'proxyGetInfo', method: () => controller.proxyGetInfo(mockReq) },
-    { name: 'proxyUpdateInfo', method: () => controller.proxyUpdateInfo(mockReq) },
+    {
+      name: 'proxyUpdateInfo',
+      method: () => controller.proxyUpdateInfo(mockReq),
+    },
     { name: 'proxyDelete', method: () => controller.proxyDelete(mockReq) },
-    { name: 'proxyGetAllUsers', method: () => controller.proxyGetAllUsers(mockReq) },
-    { name: 'proxyUpdateRoles', method: () => controller.proxyUpdateRoles(mockReq) },
+    {
+      name: 'proxyGetAllUsers',
+      method: () => controller.proxyGetAllUsers(mockReq),
+    },
+    {
+      name: 'proxyUpdateRoles',
+      method: () => controller.proxyUpdateRoles(mockReq),
+    },
   ];
 
   methods.forEach(({ name, method }) => {

@@ -10,6 +10,7 @@ import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { KafkaOptions, Transport } from '@nestjs/microservices';
+import { SASLOptions } from 'kafkajs';
 
 
 async function bootstrap() {
@@ -21,7 +22,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   const config = app.get(ConfigService);
-  const port = config.get<number>('port', 4002);
+  const port = config.get<number>('port', 4000);
 
   const brokers = config.get<string>('KAFKA_BROKERS')!.split(',');
   const clientId = config.get<string>('KAFKA_CLIENT_ID');
@@ -39,8 +40,17 @@ async function bootstrap() {
           initialRetryTime: 100,
           retries: 5,
         },
+        ssl: false,
+        sasl: {
+          mechanism: 'plain',
+          username: config.get<string>('KAFKA_SASL_USERNAME')!,
+          password: config.get<string>('KAFKA_SASL_PASSWORD')!,
+        } as SASLOptions,
       },
-      consumer: { groupId, allowAutoTopicCreation: true },
+      consumer: {
+        groupId,
+        allowAutoTopicCreation: true,
+      },
     },
   };
 
