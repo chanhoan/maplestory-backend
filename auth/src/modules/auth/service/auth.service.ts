@@ -251,7 +251,7 @@ export class AuthService {
   }
 
   /**
-   * 사용자 삭제 요청을 발행합니다. (Soft Delete + SAGA 시작)
+   * 사용자 삭제 요청을 발행합니다. (SAGA 시작)
    *
    * @param req - Express 요청 객체 (헤더의 인증 정보를 사용)
    * @returns 기본 응답
@@ -261,6 +261,8 @@ export class AuthService {
     if (!user.userId) {
       throw new NotFoundException('유효한 사용자 정보가 없습니다.');
     }
+
+    await this.logout(req);
 
     this.kafkaClient.emit('user.deletion.requested', { userId: user.userId });
     return {
