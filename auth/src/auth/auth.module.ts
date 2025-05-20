@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './user.shema';
-import { AuthRepository } from './auth.repository';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
+import { User, UserSchema } from './schema/user.shema';
+import { AuthRepository } from './repository/auth.repository';
+import { AuthService } from './service/auth.service';
+import { AuthController } from './controller/auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JWTConfigModule } from '../jwt/jwt.config.module';
 import { CacheConfigModule } from '../cache/cache.config.module';

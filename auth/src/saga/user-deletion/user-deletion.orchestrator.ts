@@ -1,7 +1,7 @@
 import { Controller, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventPattern, Payload, ClientKafka } from '@nestjs/microservices';
-import { AuthRepository } from '../../auth/auth.repository';
-import { UserDeletionSagaClient } from '../clients/user-deletion.client';
+import { AuthRepository } from '../../auth/repository/auth.repository';
+import { UserDeletionSagaClient } from './user-deletion.client';
 
 /**
  * 사용자 삭제 요청 SAGA를 오케스트레이션합니다.

@@ -10,7 +10,7 @@ import {
   HttpStatus,
   Delete,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from '../service/auth.service';
 import {
   ApiTags,
   ApiOperation,
@@ -21,16 +21,16 @@ import {
 } from '@nestjs/swagger';
 import { Request } from 'express';
 
-import { LoginRequest } from './dto/request/login.request';
-import { RegisterRequest } from './dto/request/register.request';
-import { UpdateInfoRequest } from './dto/request/update.info.request';
-import { AssignRoleRequest } from './dto/request/assign.role.request';
+import { LoginRequest } from '../dto/request/login.request';
+import { RegisterRequest } from '../dto/request/register.request';
+import { UpdateInfoRequest } from '../dto/request/update.info.request';
+import { AssignRoleRequest } from '../dto/request/assign.role.request';
 
-import { DuplicateResponse } from './dto/response/dupblicate.response';
-import { RegisterResponse } from './dto/response/register.response';
-import { LoginResponse } from './dto/response/login.response';
-import { BasicResponse } from './dto/response/basic.response';
-import { GetProfileResponse } from './dto/response/get.profile.response';
+import { DuplicateResponse } from '../dto/response/dupblicate.response';
+import { RegisterResponse } from '../dto/response/register.response';
+import { LoginResponse } from '../dto/response/login.response';
+import { BasicResponse } from '../../common/responses/basic.response';
+import { GetProfileResponse } from '../dto/response/get.profile.response';
 
 /**
  * 인증(Authentication) 관련 엔드포인트를 제공하는 컨트롤러입니다.

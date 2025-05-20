@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { AuthRepository } from './auth.repository';
+import { AuthRepository } from '../repository/auth.repository';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import * as bcrypt from 'bcrypt';
-import { UserRole } from './user.role';
+import { UserRole } from '../../common/enums/user.role';
 
 describe('AuthService', () => {
   let service: AuthService;

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UserRole } from '../../user.role';
+import { UserRole } from '../../../common/enums/user.role';
 
 /**
  * 사용자 정보를 나타내는 DTO입니다.

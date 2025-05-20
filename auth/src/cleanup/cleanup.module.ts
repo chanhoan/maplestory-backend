@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CleanupService } from './cleanup.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
-import { User, UserSchema } from '../auth/user.shema';
+import { User, UserSchema } from '../auth/schema/user.shema';
 
 @Module({
   imports: [

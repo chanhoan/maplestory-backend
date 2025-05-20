@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BasicResponse } from './basic.response';
-import { UserDto } from './use.dto';
+import { BasicResponse } from '../../../common/responses/basic.response';
+import { UserDto } from './user.dto';
 
 /**
  * 모든 사용자 목록을 포함한 응답 DTO입니다.

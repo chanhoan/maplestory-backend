@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BasicResponse } from './basic.response';
+import { BasicResponse } from '../../../common/responses/basic.response';
 
 /**
  * 회원가입 요청 성공 시 반환되는 응답 DTO입니다.

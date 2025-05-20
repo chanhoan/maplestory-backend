@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { RegisterRequest } from './dto/request/register.request';
-import { LoginRequest } from './dto/request/login.request';
-import { UpdateInfoRequest } from './dto/request/update.info.request';
-import { AssignRoleRequest } from './dto/request/assign.role.request';
-import { DuplicateResponse } from './dto/response/dupblicate.response';
-import { RegisterResponse } from './dto/response/register.response';
-import { LoginResponse } from './dto/response/login.response';
-import { BasicResponse } from './dto/response/basic.response';
-import { GetProfileResponse } from './dto/response/get.profile.response';
-import { AllUserResponse } from './dto/response/all.user.response';
-import { UserRole } from './user.role';
+import { AuthService } from '../service/auth.service';
+import { RegisterRequest } from '../dto/request/register.request';
+import { LoginRequest } from '../dto/request/login.request';
+import { UpdateInfoRequest } from '../dto/request/update.info.request';
+import { AssignRoleRequest } from '../dto/request/assign.role.request';
+import { DuplicateResponse } from '../dto/response/dupblicate.response';
+import { RegisterResponse } from '../dto/response/register.response';
+import { LoginResponse } from '../dto/response/login.response';
+import { BasicResponse } from '../../common/responses/basic.response';
+import { GetProfileResponse } from '../dto/response/get.profile.response';
+import { AllUserResponse } from '../dto/response/all.user.response';
+import { UserRole } from '../../common/enums/user.role';
 
 describe('AuthController', () => {
   let controller: AuthController;
